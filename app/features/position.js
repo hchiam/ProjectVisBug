@@ -180,7 +180,7 @@ export function rotatable(el) {
   deleteButton.style.position = 'absolute'
   deleteButton.style.left = 0
   deleteButton.style.top = 0
-  deleteButton.style.transform = `translate(${originalX + originalW}px,${originalY}px)`
+  deleteButton.style.transform = `translate(${originalX + originalW + 10}px,${originalY}px)`
   deleteButton.style.zIndex = 1
   deleteButton.style.background = 'var(--moveable-color, #4af)'
   deleteButton.style.color = '#fff'
@@ -204,7 +204,7 @@ export function rotatable(el) {
     const currentElPosition = e.target.getBoundingClientRect()
     const {x,y,width,height} = currentElPosition
     deleteButton.style.transformOrigin = `${x+width/2}px ${y+height/2}px`
-    deleteButton.style.transform = e.drag.transform + ` translate(${originalX + originalW}px,${originalY}px) `
+    deleteButton.style.transform = e.drag.transform + ` translate(${originalX + originalW + 10}px,${originalY}px) `
   })
 }
 
