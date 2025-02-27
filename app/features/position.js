@@ -1,6 +1,7 @@
 import $ from 'blingblingjs'
 import hotkeys from 'hotkeys-js'
 import { metaKey, getStyle, getSide, showHideSelected } from '../utilities/'
+import Moveable from 'moveable'
 
 const key_events = 'up,down,left,right'
   .split(',')
@@ -27,8 +28,15 @@ export function Position() {
     state.elements.forEach(el =>
       el.teardown())
 
-    state.elements = els.map(el =>
-      draggable({el}))
+    state.elements = els.map(el => {
+      draggable({el})
+      const mv = new Moveable(document.body, {
+        target: el,
+        rotatable: true
+      })
+      mv.on('rotate', e => e.target.style.transform = e.drag.transform)
+      return el
+    })
   }
 
   const disconnect = () => {
