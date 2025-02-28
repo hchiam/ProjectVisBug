@@ -192,11 +192,14 @@ export function rotatable(el) {
   deleteButton.style.display = 'flex'
   deleteButton.style.justifyContent = 'center'
   deleteButton.style.alignItems = 'center'
-  deleteButton.addEventListener('click', () => {
-    alert('clicked button');
+  deleteButton.style.cursor = 'pointer'
+  function handleDeleteButton() {
+    deleteButton.removeEventListener('click', handleDeleteButton)
+    deleteButton.remove()
+    mv.destroy()
     el.remove()
-    // TODO: delete the handles etc. too
-  })
+  }
+  deleteButton.addEventListener('click', handleDeleteButton)
   document.body.appendChild(deleteButton)
 
   mv.on('rotate', e => {
