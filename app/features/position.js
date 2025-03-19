@@ -27,8 +27,11 @@ export function Position() {
     state.elements.forEach(el =>
       el.teardown())
 
-    state.elements = els.map(el =>
-      draggable({el}))
+    state.elements = els.map(el => {
+      draggable({el})
+      rotatable({el})
+      return el
+    })
   }
 
   const disconnect = () => {
@@ -158,6 +161,16 @@ export function draggable({el, surface = el, cursor = 'move', clickEvent}) {
 
   setup()
   el.teardown = teardown
+
+  return el
+}
+
+export function rotatable({el}) {
+  const rotation = document.createElement('visbug-rotation')
+  document.body.appendChild(rotation)
+  rotation.position = {el}
+
+  el.teardown = () => rotation.remove()
 
   return el
 }
