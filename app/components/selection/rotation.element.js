@@ -38,10 +38,11 @@ export class Rotation extends HTMLElement {
         x: left + width / 2,
         y: top + height / 2
       }
-      this.startAngle = Math.atan2(
+      this.lastAngle = Math.atan2(
         e.clientY - this.originalCenter.y,
         e.clientX - this.originalCenter.x
       )
+      this.currentAngle = 0
       
       this.handleRadius = Math.sqrt(
         Math.pow(e.clientX - this.originalCenter.x, 2) + 
@@ -60,8 +61,17 @@ export class Rotation extends HTMLElement {
         e.clientX - this.originalCenter.x
       )
       
-      const rotation = currentAngle - this.startAngle
-      this.currentAngle = rotation
+      // track accumulated rotation to allow multiple revolutions
+      if (!this.lastAngle) this.lastAngle = currentAngle
+      let delta = currentAngle - this.lastAngle
+      // normalize the delta to avoid "flipping" at boundary crossing
+      if (delta > Math.PI) {
+        delta -= 2 * Math.PI
+      } else if (delta < -Math.PI) {
+        delta += 2 * Math.PI
+      }
+      this.currentAngle += delta
+      this.lastAngle = currentAngle
       
       const rotationDegrees = this.currentAngle * (180 / Math.PI)
       this.targetElement.style.transform = `rotate(${rotationDegrees}deg)`
