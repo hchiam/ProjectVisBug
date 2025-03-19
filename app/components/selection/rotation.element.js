@@ -62,7 +62,11 @@ export class Rotation extends HTMLElement {
       this.currentAngle += rotation
       this.startAngle = angle
       
-      this.targetElement.style.transform = `rotate(${this.currentAngle * (180 / Math.PI)}deg)`
+      const rotationDegrees = this.currentAngle * (180 / Math.PI)
+      this.targetElement.style.transform = `rotate(${rotationDegrees}deg)`
+      
+      const handle = this.$shadow.querySelector('.rotation-handle')
+      handle.style.transform = `rotate(${rotationDegrees}deg)`
     }
 
     const onMouseUp = () => {
