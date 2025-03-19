@@ -8,7 +8,7 @@
 }
 
 :host button {
-  background: var(--theme-color);
+  background: var(--neon-pink);
   border: none;
   border-radius: 50%;
   width: 24px;

@@ -5,6 +5,7 @@
   top: var(--top);
   left: var(--left);
   pointer-events: none;
+  z-index: var(--layer-3);
 }
 
 :host .rotation-handle {
@@ -15,11 +16,13 @@
   left: calc(var(--width) / 2 - 12px);
   cursor: grab;
   pointer-events: all;
-  background: var(--theme-color);
+  background: var(--neon-pink);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 :host .rotation-handle:active {
@@ -30,4 +33,5 @@
   width: 16px;
   height: 16px;
   fill: white;
+  pointer-events: none;
 }
