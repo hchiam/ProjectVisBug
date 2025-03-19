@@ -18,10 +18,6 @@ export class Rotation extends HTMLElement {
     const {left, top, width, height} = el.getBoundingClientRect()
     const isFixed = getComputedStyle(el).position === 'fixed'
 
-    if (!this.handleRadius) {
-      this.handleRadius = height / 2 + 30
-    }
-
     this.style.setProperty('--top', `${top + (isFixed ? 0 : window.scrollY)}px`)
     this.style.setProperty('--left', `${left}px`)
     this.style.setProperty('--position', isFixed ? 'fixed' : 'absolute')
@@ -46,6 +42,11 @@ export class Rotation extends HTMLElement {
         e.clientX - this.originalCenter.x
       )
       
+      this.handleRadius = Math.sqrt(
+        Math.pow(e.clientX - this.originalCenter.x, 2) + 
+        Math.pow(e.clientY - this.originalCenter.y, 2)
+      )
+      
       document.addEventListener('mousemove', onMouseMove)
       document.addEventListener('mouseup', onMouseUp)
     }
@@ -61,6 +62,11 @@ export class Rotation extends HTMLElement {
       
       const rotationDegrees = this.currentAngle * (180 / Math.PI)
       this.targetElement.style.transform = `rotate(${rotationDegrees}deg)`
+      
+      this.handleRadius = Math.sqrt(
+        Math.pow(e.clientX - this.originalCenter.x, 2) + 
+        Math.pow(e.clientY - this.originalCenter.y, 2)
+      )
       
       const handle = this.$shadow.querySelector('.rotation-handle')
       
