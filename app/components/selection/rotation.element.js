@@ -5,8 +5,7 @@ export class Rotation extends HTMLElement {
     super()
     this.$shadow = this.attachShadow({mode: 'closed'})
     this.styles = [HandlesStyles, RotationStyles]
-    this.startAngle = 0
-    this.currentAngle = 0
+    this.totalAngle = 0
   }
 
   connectedCallback() {
@@ -42,7 +41,6 @@ export class Rotation extends HTMLElement {
         e.clientY - this.originalCenter.y,
         e.clientX - this.originalCenter.x
       )
-      this.currentAngle = 0
       
       this.handleRadius = Math.sqrt(
         Math.pow(e.clientX - this.originalCenter.x, 2) + 
@@ -70,25 +68,21 @@ export class Rotation extends HTMLElement {
       } else if (delta < -Math.PI) {
         delta += 2 * Math.PI
       }
-      this.currentAngle += delta
+      
+      this.totalAngle += delta
       this.lastAngle = currentAngle
       
-      const rotationDegrees = this.currentAngle * (180 / Math.PI)
+      const rotationDegrees = this.totalAngle * (180 / Math.PI)
       this.targetElement.style.transform = `rotate(${rotationDegrees}deg)`
       
-      this.handleRadius = Math.sqrt(
-        Math.pow(e.clientX - this.originalCenter.x, 2) + 
-        Math.pow(e.clientY - this.originalCenter.y, 2)
-      )
+      const handleX = e.clientX
+      const handleY = e.clientY
       
-      const handle = this.$shadow.querySelector('.rotation-handle')
+      const hostRect = this.getBoundingClientRect()
       const handleRect = handle.getBoundingClientRect()
       const handleSize = handleRect.width
       
-      const handleX = this.originalCenter.x + this.handleRadius * Math.cos(currentAngle)
-      const handleY = this.originalCenter.y + this.handleRadius * Math.sin(currentAngle)
-      
-      const hostRect = this.getBoundingClientRect()
+      // position handle centered on cursor
       handle.style.left = `${handleX - hostRect.left - handleSize/2}px`
       handle.style.top = `${handleY - hostRect.top - handleSize/2}px`
 
@@ -100,6 +94,7 @@ export class Rotation extends HTMLElement {
     }
 
     const onMouseUp = () => {
+      this.lastAngle = 0
       document.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('mouseup', onMouseUp)
       line.classList.remove('active')
