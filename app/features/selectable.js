@@ -19,6 +19,8 @@ import {
   getTextShadowValues, isFixed, onRemove
 } from '../utilities/'
 
+import '../components/selection/delete.element.js'
+
 export function Selectable(visbug) {
   const page              = document.body
   let selected            = []
@@ -483,6 +485,7 @@ export function Selectable(visbug) {
       ...$('visbug-label'),
       ...$('visbug-hover'),
       ...$('visbug-distance'),
+      ...$('visbug-delete'),
     ]).forEach(el =>
       el.remove())
 
@@ -576,11 +579,18 @@ export function Selectable(visbug) {
           template: handleLabelText(el, visbug.activeTool)
         })
 
+    const deleteBtn = document.createElement('visbug-delete')
+    deleteBtn.position = {el}
+    
     let observer        = createObserver(el, {handle,label})
     let parentObserver  = createObserver(el, {handle,label})
 
-    observer.observe(el, { attributes: true })
-    parentObserver.observe(el.parentNode, { childList:true, subtree:true })
+    if (el) observer.observe(el, { attributes: true })
+    if (el.parentNode) parentObserver.observe(el.parentNode, { childList:true, subtree:true })
+      
+    deleteBtn.addObservers([observer, parentObserver])
+
+    document.body.appendChild(deleteBtn)
 
     if (label !== null) {
       onRemove(label, () => {
