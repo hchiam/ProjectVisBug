@@ -18,6 +18,10 @@ export class Rotation extends HTMLElement {
     const {left, top, width, height} = el.getBoundingClientRect()
     const isFixed = getComputedStyle(el).position === 'fixed'
 
+    if (!this.handleRadius) {
+      this.handleRadius = height / 2 + 30
+    }
+
     this.style.setProperty('--top', `${top + (isFixed ? 0 : window.scrollY)}px`)
     this.style.setProperty('--left', `${left}px`)
     this.style.setProperty('--position', isFixed ? 'fixed' : 'absolute')
@@ -33,13 +37,13 @@ export class Rotation extends HTMLElement {
     const onMouseDown = e => {
       e.preventDefault()
       const {left, top, width, height} = this.targetElement.getBoundingClientRect()
-      const center = {
+      this.originalCenter = {
         x: left + width / 2,
         y: top + height / 2
       }
       this.startAngle = Math.atan2(
-        e.clientY - center.y,
-        e.clientX - center.x
+        e.clientY - this.originalCenter.y,
+        e.clientX - this.originalCenter.x
       )
       
       document.addEventListener('mousemove', onMouseMove)
@@ -47,26 +51,25 @@ export class Rotation extends HTMLElement {
     }
 
     const onMouseMove = e => {
-      const {left, top, width, height} = this.targetElement.getBoundingClientRect()
-      const center = {
-        x: left + width / 2,
-        y: top + height / 2
-      }
-      
-      const angle = Math.atan2(
-        e.clientY - center.y,
-        e.clientX - center.x
+      const currentAngle = Math.atan2(
+        e.clientY - this.originalCenter.y,
+        e.clientX - this.originalCenter.x
       )
       
-      const rotation = angle - this.startAngle
-      this.currentAngle += rotation
-      this.startAngle = angle
+      const rotation = currentAngle - this.startAngle
+      this.currentAngle = rotation
       
       const rotationDegrees = this.currentAngle * (180 / Math.PI)
       this.targetElement.style.transform = `rotate(${rotationDegrees}deg)`
       
       const handle = this.$shadow.querySelector('.rotation-handle')
-      handle.style.transform = `rotate(${rotationDegrees}deg)`
+      
+      const handleX = this.originalCenter.x + this.handleRadius * Math.cos(currentAngle)
+      const handleY = this.originalCenter.y + this.handleRadius * Math.sin(currentAngle)
+      
+      const hostRect = this.getBoundingClientRect()
+      handle.style.left = `${handleX - hostRect.left - 12}px`
+      handle.style.top = `${handleY - hostRect.top}px`
     }
 
     const onMouseUp = () => {
