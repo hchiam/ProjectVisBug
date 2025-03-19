@@ -29,6 +29,7 @@ export class Rotation extends HTMLElement {
 
   setupRotationHandlers() {
     const handle = this.$shadow.querySelector('.rotation-handle')
+    const line = this.$shadow.querySelector('.rotation-line')
     
     const onMouseDown = e => {
       e.preventDefault()
@@ -46,6 +47,8 @@ export class Rotation extends HTMLElement {
         Math.pow(e.clientX - this.originalCenter.x, 2) + 
         Math.pow(e.clientY - this.originalCenter.y, 2)
       )
+      
+      line.classList.add('active')
       
       document.addEventListener('mousemove', onMouseMove)
       document.addEventListener('mouseup', onMouseUp)
@@ -78,11 +81,18 @@ export class Rotation extends HTMLElement {
       const hostRect = this.getBoundingClientRect()
       handle.style.left = `${handleX - hostRect.left - handleSize/2}px`
       handle.style.top = `${handleY - hostRect.top - handleSize/2}px`
+
+      const lineSvg = line.querySelector('line')
+      lineSvg.setAttribute('x1', this.originalCenter.x)
+      lineSvg.setAttribute('y1', this.originalCenter.y)
+      lineSvg.setAttribute('x2', handleX)
+      lineSvg.setAttribute('y2', handleY)
     }
 
     const onMouseUp = () => {
       document.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('mouseup', onMouseUp)
+      line.classList.remove('active')
     }
 
     handle.addEventListener('mousedown', onMouseDown)
@@ -98,6 +108,9 @@ export class Rotation extends HTMLElement {
 
   render() {
     return `
+      <svg class="rotation-line">
+        <line/>
+      </svg>
       <div class="rotation-handle">
         <svg class="rotation-icon" viewBox="0 0 24 24">
           <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
