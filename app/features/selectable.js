@@ -486,6 +486,7 @@ export function Selectable(visbug) {
       ...$('visbug-hover'),
       ...$('visbug-distance'),
       ...$('visbug-delete'),
+      ...$('visbug-rotation'),
     ]).forEach(el =>
       el.remove())
 
@@ -580,7 +581,12 @@ export function Selectable(visbug) {
         })
 
     const deleteBtn = document.createElement('visbug-delete')
+    const rotationBtn = document.createElement('visbug-rotation')
+    rotationBtn.position = {el}
+    rotationBtn.setAttribute('data-label-id', id)
+
     deleteBtn.position = {el}
+    deleteBtn.linkedElementsToDeleteToo = [rotationBtn]
     
     let observer        = createObserver(el, {handle,label})
     let parentObserver  = createObserver(el, {handle,label})
@@ -589,8 +595,9 @@ export function Selectable(visbug) {
     if (el.parentNode) parentObserver.observe(el.parentNode, { childList:true, subtree:true })
       
     deleteBtn.addObservers([observer, parentObserver])
-
+    
     document.body.appendChild(deleteBtn)
+    document.body.appendChild(rotationBtn)
 
     if (label !== null) {
       onRemove(label, () => {

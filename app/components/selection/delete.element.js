@@ -12,6 +12,10 @@ export class Delete extends HTMLElement {
     this.observers = observers
   }
 
+  set linkedElementsToDeleteToo(elements) {
+    this._linkedElementsToDeleteToo = elements
+  }
+
   connectedCallback() {
     this.$shadow.adoptedStyleSheets = this.styles
     this.$shadow.innerHTML = this.render()
@@ -40,7 +44,7 @@ export class Delete extends HTMLElement {
     }
 
     this.observers.forEach(observer => observer.disconnect())
-
+    this._linkedElementsToDeleteToo?.forEach(el => el.remove())
     this.targetElement.remove()
     
     const labelId = this.targetElement.getAttribute('data-label-id')

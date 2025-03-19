@@ -29,7 +29,6 @@ export function Position() {
 
     state.elements = els.map(el => {
       draggable({el})
-      rotatable({el})
       return el
     })
   }
