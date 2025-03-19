@@ -69,13 +69,15 @@ export class Rotation extends HTMLElement {
       )
       
       const handle = this.$shadow.querySelector('.rotation-handle')
+      const handleRect = handle.getBoundingClientRect()
+      const handleSize = handleRect.width
       
       const handleX = this.originalCenter.x + this.handleRadius * Math.cos(currentAngle)
       const handleY = this.originalCenter.y + this.handleRadius * Math.sin(currentAngle)
       
       const hostRect = this.getBoundingClientRect()
-      handle.style.left = `${handleX - hostRect.left - 12}px`
-      handle.style.top = `${handleY - hostRect.top}px`
+      handle.style.left = `${handleX - hostRect.left - handleSize/2}px`
+      handle.style.top = `${handleY - hostRect.top - handleSize/2}px`
     }
 
     const onMouseUp = () => {
