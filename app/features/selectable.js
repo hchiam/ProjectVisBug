@@ -429,7 +429,7 @@ export function Selectable(visbug) {
     if (tool === 'guides') {
       handles.forEach(handle => {
         handle.hidePopover &&  handle.hidePopover()
-        handle.showPopover && handle.showPopover()
+        if (handle.isConnected && handle.showPopover) handle.showPopover()
       })
     }
   }
@@ -456,7 +456,7 @@ export function Selectable(visbug) {
 
     $('visbug-metatip, visbug-ally').forEach(tip => {
       tip.hidePopover && tip.hidePopover()
-      tip.showPopover && tip.showPopover()
+      if (tip.isConnected && tip.showPopover) tip.showPopover()
     })
 
     selected.unshift(el)
