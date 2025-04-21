@@ -25,6 +25,8 @@ export function Selectable(visbug) {
   let selectedCallbacks   = []
   let labels              = []
   let handles             = []
+  let rotationBtn         = null
+  let deleteBtn           = null
 
   const hover_state       = {
     target:   null,
@@ -502,12 +504,19 @@ export function Selectable(visbug) {
       else if (el.parentNode)   return el.parentNode
     })
 
-    Array.from([...selected, ...labels, ...handles]).forEach(el =>
-      el.remove())
+    Array.from([
+      ...selected, 
+      ...labels, 
+      ...handles,
+      rotationBtn,
+      deleteBtn
+    ]).forEach(el => el.remove())
 
-    labels    = []
-    handles   = []
-    selected  = []
+    labels      = []
+    handles     = []
+    selected    = []
+    rotationBtn = null
+    deleteBtn   = null
 
     selected_after_delete.forEach(el =>
       select(el))
@@ -578,8 +587,8 @@ export function Selectable(visbug) {
           template: handleLabelText(el, visbug.activeTool)
         })
 
-    const deleteBtn = document.createElement('visbug-delete')
-    const rotationBtn = document.createElement('visbug-rotation')
+    deleteBtn = document.createElement('visbug-delete')
+    rotationBtn = document.createElement('visbug-rotation')
     rotationBtn.position = {el}
     rotationBtn.setAttribute('data-label-id', id)
 
