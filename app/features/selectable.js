@@ -19,8 +19,6 @@ import {
   getTextShadowValues, isFixed, onRemove
 } from '../utilities/'
 
-import '../components/selection/delete.element.js'
-
 export function Selectable(visbug) {
   const page              = document.body
   let selected            = []
