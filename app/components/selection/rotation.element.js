@@ -14,8 +14,12 @@ export class Rotation extends HTMLElement {
 
   set position({el}) {
     this.targetElement = el
+    
+    const computedStyle = getComputedStyle(el)
+    if (computedStyle.display === 'inline') el.style.display = 'inline-block'
+
     const {left, top, width, height} = el.getBoundingClientRect()
-    const isFixed = getComputedStyle(el).position === 'fixed'
+    const isFixed = computedStyle.position === 'fixed'
 
     this.style.setProperty('--top', `${top + (isFixed ? 0 : window.scrollY)}px`)
     this.style.setProperty('--left', `${left}px`)
