@@ -1,4 +1,5 @@
 import { DeleteStyles } from '../styles.store'
+import { animateViewTransition } from '../../utilities/'
 
 export class Delete extends HTMLElement {
   constructor() {
@@ -34,7 +35,7 @@ export class Delete extends HTMLElement {
     this.style.setProperty('--position', isFixed ? 'fixed' : 'absolute')
   }
 
-  deleteElement(e) {
+  async deleteElement(e) {
     e.preventDefault()
     e.stopPropagation()
     
@@ -44,6 +45,18 @@ export class Delete extends HTMLElement {
     }
 
     this.observers.forEach(observer => observer.disconnect())
+
+    const elements = [
+      this.targetElement,
+      ...this._linkedElementsToDeleteToo || [],
+      ...Array.from(document.querySelectorAll(`[data-label-id="${this.targetElement.getAttribute('data-label-id')}"]`)),
+      this
+    ]
+
+    await animateViewTransition(elements, () => this.performDeletion())
+  }
+
+  performDeletion() {
     this._linkedElementsToDeleteToo?.forEach(el => el.remove())
     this.targetElement.remove()
     

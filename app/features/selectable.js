@@ -16,7 +16,7 @@ import {
   metaKey, htmlStringToDom, createClassname, camelToDash,
   isOffBounds, getStyle, getStyles, deepElementFromPoint, getShadowValues,
   isSelectorValid, findNearestChildElement, findNearestParentElement,
-  getTextShadowValues, isFixed, onRemove
+  getTextShadowValues, isFixed, onRemove, animateViewTransition
 } from '../utilities/'
 
 export function Selectable(visbug) {
@@ -159,8 +159,8 @@ export function Selectable(visbug) {
     e.preventDefault()
   }
 
-  const on_delete = e =>
-    selected.length && delete_all()
+  const on_delete = async e =>
+    selected.length && await delete_all()
 
   const on_clearstyles = e =>
     selected.forEach(el =>
@@ -497,13 +497,28 @@ export function Selectable(visbug) {
     !silent && tellWatchers()
   }
 
-  const delete_all = () => {
+  const delete_all = async () => {
     const selected_after_delete = selected.map(el => {
       if (canMoveRight(el))     return canMoveRight(el)
       else if (canMoveLeft(el)) return canMoveLeft(el)
       else if (el.parentNode)   return el.parentNode
     })
 
+    const elements = [
+      ...selected, 
+      ...labels, 
+      ...handles,
+      rotationBtn,
+      deleteBtn
+    ].filter(Boolean)
+
+    await animateViewTransition(elements, () => performDeletion())
+
+    selected_after_delete.forEach(el =>
+      select(el))
+  }
+
+  const performDeletion = () => {
     Array.from([
       ...selected, 
       ...labels, 
@@ -511,15 +526,12 @@ export function Selectable(visbug) {
       rotationBtn,
       deleteBtn
     ]).forEach(el => el.remove())
-
+    
     labels      = []
     handles     = []
     selected    = []
     rotationBtn = null
     deleteBtn   = null
-
-    selected_after_delete.forEach(el =>
-      select(el))
   }
 
   const expandSelection = ({query, all = false}) => {
